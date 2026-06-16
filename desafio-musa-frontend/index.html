@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSA - Rateio de MTRs</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <section id="tela-upload" class="tela ativa">
+            <div class="container">
+                <header class="header">
+                    <div class="logo">
+                        <img src="assets/logo-musa.png" alt="Musa Gestão de Resíduos" id="logo-img">
+                    </div>
+                </header>
+
+                <main class="main-content">
+                    <div class="card upload-card">
+                        <h1 class="titulo">Rateio de MTRs</h1>
+                        <p class="subtitulo">Sistema de conferência de pesos declarados vs. peso real</p>
+
+                        <div class="instrucoes">
+                            <h3>Instruções de Uso</h3>
+                            <ol>
+                                <li>Informe o <strong>peso real</strong> medido na balança (em kg)</li>
+                                <li>Adicione as <strong>fotos dos MTRs</strong> recebidos</li>
+                                <li>Clique em <strong>"Processar MTRs"</strong> para análise automática</li>
+                                <li>O sistema extrairá os dados e identificará divergências</li>
+                            </ol>
+                        </div>
+
+                        <form id="form-upload" class="form-upload">
+                            <div class="campo-grupo">
+                                <label for="peso-real">Peso Real do Caminhão (kg) *</label>
+                                <input 
+                                    type="number" 
+                                    id="peso-real" 
+                                    name="peso_real" 
+                                    placeholder="Ex: 28500" 
+                                    required
+                                    min="0"
+                                    step="0.01"
+                                >
+                                <span class="campo-ajuda">Informe o peso medido na balança em quilogramas</span>
+                            </div>
+
+                            <div class="campo-grupo" id="grupo-imagens">
+                                <label>Fotos dos MTRs *</label>
+                                <div id="lista-imagens" class="lista-imagens">
+                                    <div class="item-imagem" data-index="0">
+                                        <div class="preview-area" id="preview-0">
+                                            <svg class="icone-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="17 8 12 3 7 8"></polyline>
+                                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                                            </svg>
+                                            <span>Clique para selecionar ou arraste uma imagem</span>
+                                            <span class="formatos-suportados">JPG, PNG, WEBP</span>
+                                        </div>
+                                        <input 
+                                            type="file" 
+                                            name="imagens" 
+                                            accept="image/jpeg,image/png,image/webp"
+                                            required
+                                            class="input-imagem"
+                                            id="imagem-0"
+                                        >
+                                        <button type="button" class="btn-remover-imagem" onclick="removerImagem(0)" title="Remover imagem">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                        <span class="nome-arquivo" id="nome-0"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" id="btn-adicionar-imagem" class="btn-adicionar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Adicionar outra imagem de MTR
+                            </button>
+
+                            <button type="submit" id="btn-processar" class="btn-principal">
+                                <span class="btn-texto">Processar MTRs</span>
+                                <span class="btn-loading" style="display: none;">
+                                    <svg class="spinner" viewBox="0 0 50 50">
+                                        <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="80" stroke-dashoffset="0">
+                                            <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+                                        </circle>
+                                    </svg>
+                                    Processando...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </main>
+
+                <footer class="footer">
+                    <p>© 2026 Musa Gestão de Resíduos. Todos os direitos reservados.</p>
+                </footer>
+            </div>
+        </section>
+
+        <section id="tela-resultado" class="tela">
+            <div class="container">
+                <header class="header">
+                    <div class="logo">
+                        <img src="assets/logo-musa.png" alt="Musa Gestão de Resíduos" id="logo-img-resultado">
+                    </div>
+                    <button type="button" id="btn-nova-analise" class="btn-secundario">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                        Nova Análise
+                    </button>
+                </header>
+
+                <main class="main-content">
+                    <h1 class="titulo-resultado">Resultado da Análise</h1>
+
+                    <div class="cards-resumo" id="cards-resumo">
+                        <div class="card-resumo">
+                            <div class="card-info">
+                                <span class="card-label">Peso Real</span>
+                                <span class="card-valor" id="card-peso-real">--</span>
+                            </div>
+                        </div>
+                        <div class="card-resumo">
+                            <div class="card-info">
+                                <span class="card-label">Soma Declarada</span>
+                                <span class="card-valor" id="card-soma-declarada">--</span>
+                            </div>
+                        </div>
+                        <div class="card-resumo">
+                            <div class="card-info">
+                                <span class="card-label">Diferença</span>
+                                <span class="card-valor" id="card-diferenca">--</span>
+                            </div>
+                        </div>
+                        <div class="card-resumo">
+                            <div class="card-info">
+                                <span class="card-label">Percentual</span>
+                                <span class="card-valor" id="card-percentual">--</span>
+                            </div>
+                        </div>
+                        <div class="card-resumo card-status" id="card-status">
+                            <div class="card-info">
+                                <span class="card-label">Status</span>
+                                <span class="card-valor" id="card-status-texto">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="secao-tabela">
+                        <h2 class="secao-titulo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            MTRs Processados
+                        </h2>
+                        <div class="tabela-container">
+                            <table class="tabela" id="tabela-mtrs">
+                                <thead>
+                                    <tr>
+                                        <th>MTR</th>
+                                        <th>Gerador</th>
+                                        <th>Tipo de Resíduo</th>
+                                        <th>Peso Declarado</th>
+                                        <th>Revisão Manual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-mtrs">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="secao-tabela" id="secao-problemas" style="display: none;">
+                        <h2 class="secao-titulo secao-titulo-erro">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Problemas Encontrados
+                        </h2>
+                        <div class="tabela-container">
+                            <table class="tabela tabela-problemas" id="tabela-problemas">
+                                <thead>
+                                    <tr>
+                                        <th>MTR</th>
+                                        <th>Problemas Encontrados</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-problemas">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="footer">
+                    <p>© 2026 Musa Gestão de Resíduos. Todos os direitos reservados.</p>
+                </footer>
+            </div>
+        </section>
+    </div>
+
+    <div id="toast" class="toast">
+        <span id="toast-mensagem"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
