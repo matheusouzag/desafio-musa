@@ -1,4 +1,4 @@
-# Desafio Musa — Rateio de MTRs
+# Desafio Musa - Rateio de MTRs
 
 WebApp para conferência automática do peso declarado em Manifestos de Transporte de Resíduos (MTRs) contra o peso real medido na balança. O usuário envia uma ou mais fotos de MTRs e informa o peso real do caminhão; o backend usa o Gemini (Google Generative AI) para extrair os dados de cada manifesto e calcula a diferença entre o que foi declarado e o que efetivamente chegou.
 
