@@ -2,6 +2,8 @@
 
 WebApp para conferência automática do peso declarado em Manifestos de Transporte de Resíduos (MTRs) contra o peso real medido na balança. O usuário envia uma ou mais fotos de MTRs e informa o peso real do caminhão; o backend usa o Gemini (Google Generative AI) para extrair os dados de cada manifesto e calcula a diferença entre o que foi declarado e o que efetivamente chegou.
 
+[Link da Apresentação](https://docs.google.com/presentation/d/1xfjEx_s2h9FrhgyA8Ttwogp6fIIu7QmJ67NQ-MHQLeg/edit?usp=sharing)
+
 ## Funcionalidades
 
 - Upload de uma ou várias fotos de MTRs (JPG, PNG ou WEBP) junto com o peso real do caminhão.
