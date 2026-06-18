@@ -287,7 +287,7 @@ function renderizarResultado(data) {
     elementos.cardStatusTexto.textContent = status.texto;
     elementos.cardStatus.className = `card-resumo card-status ${status.classe}`;
     
-    renderizarTabelaMtrs(data.mtrs);
+    renderizarTabelaMtrs(data.mtrs, data.peso_real);
     
     if (data.faltantes_mtrs && data.faltantes_mtrs.length > 0) {
         renderizarTabelaProblemas(data.faltantes_mtrs);
@@ -297,28 +297,38 @@ function renderizarResultado(data) {
     }
 }
 
-function renderizarTabelaMtrs(mtrs) {
+function calcularPesoSugerido(mtrs, pesoReal) {
+    const somaDeclarada = mtrs.reduce((acc, mtr) => acc + (mtr.peso_declarado || 0), 0);
+    if (somaDeclarada === 0) return mtrs.map(() => null);
+    return mtrs.map(mtr => (mtr.peso_declarado / somaDeclarada) * pesoReal);
+}
+
+function renderizarTabelaMtrs(mtrs, pesoReal) {
     elementos.tbodyMtrs.innerHTML = '';
     
     if (!mtrs || mtrs.length === 0) {
         elementos.tbodyMtrs.innerHTML = `
             <tr>
-                <td colspan="5" class="text-center">Nenhum MTR processado</td>
+                <td colspan="6" class="text-center">Nenhum MTR processado</td>
             </tr>
         `;
         return;
     }
+
+    const pesosSugeridos = calcularPesoSugerido(mtrs, pesoReal);
     
-    mtrs.forEach(mtr => {
+    mtrs.forEach((mtr, i) => {
+        const pesoSugerido = pesosSugeridos[i];
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${escapeHtml(mtr.mtr)}</td>
             <td>${escapeHtml(mtr.gerador)}</td>
             <td>${escapeHtml(mtr.tipo_residuo)}</td>
             <td>${formatarPeso(mtr.peso_declarado)}</td>
+            <td class="peso-sugerido">${pesoSugerido !== null ? formatarPeso(pesoSugerido) : '--'}</td>
             <td>
                 <span class="badge-revisao ${mtr.revisao_manual ? 'sim' : 'nao'}">
-                    ${mtr.revisao_manual ? 'Sim' : '✓ Não'}
+                    ${mtr.revisao_manual ? '✗ Sim' : '✓ Não'}
                 </span>
             </td>
         `;
